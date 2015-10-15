@@ -1,0 +1,5 @@
+include ":esdk_platform_common", ":esdk_platform_interface", ":esdk_platform_srv", ":esdk_platform_impl"
+include ":esdk_platform_plugin_domain", ":esdk_platform_plugin_interface", ":esdk_platform_plugin_manager"
+include ":esdk_platform_soap_srv", ":esdk_platform_rest_srv", ":esdk_platform_web"
+include ":esdk_platform_config_tool", ":esdk_platform_fault_msg_tool", ":esdk_platform_om",":esdk_platform_mgmt_srv"
+include ":esdk_platform_om_sso"

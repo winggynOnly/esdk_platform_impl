@@ -1,0 +1,85 @@
+ext.esdkSrcRootDir = file("$project.projectDir/../../..").absolutePath
+
+apply from: "$esdkSrcRootDir/eSDK_Platform_V100R005/Server/source/esdk_tools/release_package/common_methods.gradle"
+
+allprojects {
+	apply from: "$esdkSrcRootDir/eSDK_Platform_V100R005/Server/source/esdk_tools/release_package/common_allprojects.gradle"
+}
+subprojects {
+	apply from: "$esdkSrcRootDir/eSDK_Platform_V100R005/Server/source/esdk_tools/release_package/common_subprojects.gradle"
+	
+	repositories {
+		flatDir { dirs "$esdkSrcRootDir/eSDK_Platform_V100R005/Server/source/esdk_platform_om_sso/WebContent/WEB-INF/lib" }
+	}
+}
+
+task zipComponent (type:Zip) {
+	def fileName = "$esdkSrcRootDir/eSDK_Platform_V100R005/Server/source/esdk_tools/release_package/temp.txt"
+	File f = new File(fileName)
+	def tempStr = f.getText()
+	if ('sso' == tempStr) {
+		from ("$esdkSrcRootDir/eSDK_Platform_V100R005/Server/open_src") {
+			include 'log4j-1.2.16.jar'
+			include 'dom4j-1.6.1.jar'
+			include 'commons-digester3-3.2.jar'
+			include 'commons-io-2.4.jar'
+			include 'gson-2.2.2.jar'
+			include 'quartz-1.7.3.jar'
+			include 'commons-beanutils-1.9.1.jar'
+		}
+		from ("$esdkSrcRootDir/eSDK_Platform_V100R005/Server/open_src/cxf-2.6.14") {
+			include 'commons-logging-1.1.1.jar'
+			include '*cxf*.jar'
+		}
+		from ("$esdkSrcRootDir/eSDK_Platform_V100R005/Server/open_src/restlet-2.2.1") {
+			include '*.jar'
+		}
+		from ("$esdkSrcRootDir/eSDK_Platform_V100R005/Server/open_src/httpclient-4.2.3") {
+			include '*.jar'
+		}
+		from ("$esdkSrcRootDir/eSDK_Platform_V100R005/Server/open_src/spring-3.2.8"){
+			include 'spring-web-3.2.8.RELEASE.jar'
+			include 'spring-context-3.2.8.RELEASE.jar'
+			include 'spring-context-support-3.2.8.RELEASE.jar'
+			include 'spring-core-3.2.8.RELEASE.jar'
+			include 'spring-expression-3.2.8.RELEASE.jar'
+			include 'spring-beans-3.2.8.RELEASE.jar'
+			include 'spring-aop-3.2.8.RELEASE.jar'
+			include 'spring-tx-3.2.8.RELEASE.jar'
+		}
+		
+		into "esdk/webcontent/WEB-INF/lib"
+		destinationDir file("$esdkSrcRootDir/eSDK_Platform_V100R005/Server/source/esdk_platform_common/build/distributions")
+		archiveName "esdk-thirdPartyJavaLibs.zip"
+	} else {
+		from ("$esdkSrcRootDir/eSDK_Platform_V100R005/Server/open_src"){
+			include '*.jar'
+			exclude 'hamcrest-core*'
+		}
+		from ("$esdkSrcRootDir/eSDK_Platform_V100R005/Server/open_src/cxf-2.6.14"){
+			include '*.jar'			
+		}
+		from ("$esdkSrcRootDir/eSDK_Platform_V100R005/Server/open_src/httpclient-4.2.3"){
+			include '*.jar'
+		}
+		from ("$esdkSrcRootDir/eSDK_Platform_V100R005/Server/open_src/spring-3.2.8"){
+			include '*.jar'
+		}
+		from ("$esdkSrcRootDir/eSDK_Platform_V100R005/Server/open_src/restlet-2.2.1"){
+			include '*.jar'
+		}
+		
+		into "esdk/webcontent/WEB-INF/lib"
+		
+		destinationDir file("$esdkSrcRootDir/eSDK_Platform_V100R005/Server/source/esdk_platform_common/build/distributions")
+		archiveName "esdk-thirdPartyJavaLibs.zip"
+	}
+}
+
+def addDependentProject(proj, cfg, jarOrProjName) {
+	if (proj.rootProject.findProject(jarOrProjName) != null) {
+		 proj.dependencies.add(cfg, this.project(":$jarOrProjName"))
+	} else {
+		proj.dependencies.add(cfg, ":$jarOrProjName")
+	}
+}
